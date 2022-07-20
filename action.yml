@@ -1,0 +1,72 @@
+name: 'Run GAP tests'
+description: 'Run the testintall.g or the teststandard.g script'
+inputs:
+  ONLY_NEEDED:
+    description: 'Only load needed packages'
+    required: false
+    default: false
+  COMPLETE:
+    description: 'Whether to use teststandard.g instead of testinstall.g'
+    required: false
+    default: false
+    
+runs:
+  using: "composite"
+  steps:
+    - name: "Run test suite"
+      run: |
+       set -ex
+         
+       GAPROOT=/opt/gap
+       
+       # set up a custom GAP root containing only this package, so that
+       # we can force GAP to load the correct version of this package
+       # (we already did that in build_pkg.sh, but we do it again here,
+       # to allow the occasional instance where a package wants to also
+       # run the tests of others packages, by invoking this script multiple
+       # times in different directories)
+       mkdir -p /tmp/gaproot/pkg/
+       ln -f -s $PWD /tmp/gaproot/pkg/
+       
+       # start GAP with custom GAP root, to ensure correct package version is loaded
+       GAP="$GAPROOT/bin/gap.sh ${{ inputs.GAP_FLAGS }} -l /tmp/gaproot; --quitonbreak"
+       
+       # If turned on by setting the COVERAGE environment variable, we 
+       # collect coverage data
+       if [ "${{ inputs.COVERAGE }}" == "true" ]; then
+           mkdir -p ${COVDIR-coverage}
+           GAP="$GAP --cover ${COVDIR-coverage}/$(mktemp XXXXXX).coverage"
+       fi
+       
+       $GAP <<GAPInput
+       
+       # Decide which test file should be used
+       if ${{ inputs.COMPLETE }} then
+           testFile := "teststandard.g";
+       else
+           testFile := "testinstall.g";
+       fi;
+       
+       GAP_TESTFILE := Filename( DirectoriesLibrary( "tst" ), testFile );
+       
+       Read( "PackageInfo.g" );
+       info := GAPInfo.PackageInfoCurrent;
+       
+       # Load the package with debug info
+       SetInfoLevel( InfoPackageLoading, PACKAGE_DEBUG );
+       SetPackagePath( info.PackageName, "/tmp/gaproot/pkg/$(basename $PWD)" );
+       if ${{ inputs.ONLY_NEEDED }} then
+           LoadPackage( info.PackageName : OnlyNeeded );
+       else
+           LoadPackage( info.PackageName );
+       fi;
+       SetInfoLevel( InfoPackageLoading, PACKAGE_ERROR );
+       
+
+       Read( GAP_TESTFILE );
+       GAPInput
+       
+      env:
+        ONLY_NEEDED: ${{ inputs.ONLY_NEEDED }}
+        COMPLETE: ${{ inputs.COMPLETE }}
+      shell: bash
