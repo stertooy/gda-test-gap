@@ -1,12 +1,12 @@
-name: 'Run GAP testsuite'
-description: 'Run the testintall.g or the teststandard.g script'
+name: "Run GAP test suite"
+description: "Runs the testintall.g or the teststandard.g script to test the GAP installation"
 inputs:
   ONLY_NEEDED:
-    description: 'Only load needed packages'
+    description: "Only load necessary packages, not suggested ones, prior to testing"
     required: false
     default: false
   COMPLETE:
-    description: 'Whether to use testinstall.g or the more complete teststandard.g'
+    description: "Whether to use testinstall.g or the more complete (but slower) teststandard.g"
     required: false
     default: false
     
@@ -14,6 +14,7 @@ runs:
   using: "composite"
   steps:
     - name: "Run GAP test suite"
+      shell: bash
       run: |
        set -ex
          
@@ -21,10 +22,6 @@ runs:
        
        # set up a custom GAP root containing only this package, so that
        # we can force GAP to load the correct version of this package
-       # (we already did that in build_pkg.sh, but we do it again here,
-       # to allow the occasional instance where a package wants to also
-       # run the tests of others packages, by invoking this script multiple
-       # times in different directories)
        mkdir -p /tmp/gaproot/pkg/
        ln -f -s $PWD /tmp/gaproot/pkg/
        
@@ -65,8 +62,3 @@ runs:
 
        Read( GAP_TESTFILE );
        GAPInput
-       
-      env:
-        ONLY_NEEDED: ${{ inputs.ONLY_NEEDED }}
-        COMPLETE: ${{ inputs.COMPLETE }}
-      shell: bash
