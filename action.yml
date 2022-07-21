@@ -1,4 +1,4 @@
-name: 'Run GAP tests'
+name: 'Run GAP testsuite'
 description: 'Run the testintall.g or the teststandard.g script'
 inputs:
   ONLY_NEEDED:
@@ -6,14 +6,14 @@ inputs:
     required: false
     default: false
   COMPLETE:
-    description: 'Whether to use teststandard.g instead of testinstall.g'
+    description: 'Whether to use testinstall.g or the more complete teststandard.g'
     required: false
     default: false
     
 runs:
   using: "composite"
   steps:
-    - name: "Run test suite"
+    - name: "Run GAP test suite"
       run: |
        set -ex
          
@@ -29,7 +29,7 @@ runs:
        ln -f -s $PWD /tmp/gaproot/pkg/
        
        # start GAP with custom GAP root, to ensure correct package version is loaded
-       GAP="$GAPROOT/bin/gap.sh ${{ inputs.GAP_FLAGS }} -l /tmp/gaproot; --quitonbreak"
+       GAP="$GAPROOT/bin/gap.sh -A ${{ inputs.GAP_FLAGS }} -l /tmp/gaproot; --quitonbreak"
        
        # If turned on by setting the COVERAGE environment variable, we 
        # collect coverage data
