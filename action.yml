@@ -17,8 +17,6 @@ runs:
       shell: bash
       run: |
        set -ex
-         
-       GAPROOT=/opt/gap
        
        # set up a custom GAP root containing only this package, so that
        # we can force GAP to load the correct version of this package
@@ -26,7 +24,7 @@ runs:
        ln -f -s $PWD /tmp/gaproot/pkg/
        
        # start GAP with custom GAP root, to ensure correct package version is loaded
-       GAP="$GAPROOT/bin/gap.sh -A ${{ inputs.GAP_FLAGS }} -l /tmp/gaproot; --quitonbreak"
+       GAP="gap -A ${{ inputs.GAP_FLAGS }} -l /tmp/gaproot; --quitonbreak"
        
        # If turned on by setting the COVERAGE environment variable, we 
        # collect coverage data
@@ -58,7 +56,6 @@ runs:
            LoadPackage( info.PackageName );
        fi;
        SetInfoLevel( InfoPackageLoading, PACKAGE_ERROR );
-       
 
        Read( GAP_TESTFILE );
        GAPInput
