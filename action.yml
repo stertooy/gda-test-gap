@@ -9,9 +9,6 @@ inputs:
     description: "Whether to use testinstall.g or the more complete (but slower) teststandard.g"
     required: false
     default: false
-defaults:
-  run:
-    shel:: bash
 
 runs:
   using: "composite"
