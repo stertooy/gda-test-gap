@@ -9,53 +9,48 @@ inputs:
     description: "Whether to use testinstall.g or the more complete (but slower) teststandard.g"
     required: false
     default: false
-    
+defaults:
+  run:
+    shel:: bash
+
 runs:
   using: "composite"
   steps:
+  
     - name: "Run GAP test suite"
       shell: bash
       run: |
-       set -ex
+        set -ex
        
-       # set up a custom GAP root containing only this package, so that
-       # we can force GAP to load the correct version of this package
-       mkdir -p /tmp/gaproot/pkg/
-       ln -f -s $PWD /tmp/gaproot/pkg/
-       
-       # start GAP with custom GAP root, to ensure correct package version is loaded
-       GAP="gap -A ${{ inputs.GAP_FLAGS }} -l /tmp/gaproot; --quitonbreak"
-       
-       # If turned on by setting the COVERAGE environment variable, we 
-       # collect coverage data
-       if [ "${{ inputs.COVERAGE }}" == "true" ]; then
-           mkdir -p ${COVDIR-coverage}
-           GAP="$GAP --cover ${COVDIR-coverage}/$(mktemp XXXXXX).coverage"
-       fi
-       
-       $GAP <<GAPInput
-       
-       # Decide which test file should be used
-       if ${{ inputs.COMPLETE }} then
-           testFile := "teststandard.g";
-       else
-           testFile := "testinstall.g";
-       fi;
-       
-       GAP_TESTFILE := Filename( DirectoriesLibrary( "tst" ), testFile );
-       
-       Read( "PackageInfo.g" );
-       info := GAPInfo.PackageInfoCurrent;
-       
-       # Load the package with debug info
-       SetInfoLevel( InfoPackageLoading, PACKAGE_DEBUG );
-       SetPackagePath( info.PackageName, "/tmp/gaproot/pkg/$(basename $PWD)" );
-       if ${{ inputs.ONLY_NEEDED }} then
-           LoadPackage( info.PackageName : OnlyNeeded );
-       else
-           LoadPackage( info.PackageName );
-       fi;
-       SetInfoLevel( InfoPackageLoading, PACKAGE_ERROR );
-
-       Read( GAP_TESTFILE );
-       GAPInput
+        # Add package to the custom GAP root
+        ln -f -s $PWD /tmp/gaproot/pkg/
+        
+        # Add extra flags
+        GAP="gap ${{ inputs.GAP_FLAGS }}"
+        
+        $GAP <<GAPInput
+        
+        # Decide which test file should be used
+        if ${{ inputs.COMPLETE }} then
+            testFile := "teststandard.g";
+        else
+            testFile := "testinstall.g";
+        fi;
+        
+        GAP_TESTFILE := Filename( DirectoriesLibrary( "tst" ), testFile );
+        
+        Read( "PackageInfo.g" );
+        info := GAPInfo.PackageInfoCurrent;
+        
+        # Load the package with debug info
+        SetInfoLevel( InfoPackageLoading, PACKAGE_DEBUG );
+        SetPackagePath( info.PackageName, "/tmp/gaproot/pkg/$(basename $PWD)" );
+        if ${{ inputs.ONLY_NEEDED }} then
+            LoadPackage( info.PackageName : OnlyNeeded );
+        else
+            LoadPackage( info.PackageName );
+        fi;
+        SetInfoLevel( InfoPackageLoading, PACKAGE_ERROR );
+        
+        Read( GAP_TESTFILE );
+        GAPInput
