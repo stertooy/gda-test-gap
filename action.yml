@@ -20,7 +20,7 @@ runs:
         set -ex
        
         # Add package to the custom GAP root
-        ln -f -s $PWD /tmp/gaproot/pkg/
+        ln -f -s $PWD $GAP_ROOT/pkg/
         
         # Add extra flags
         GAP="gap ${{ inputs.GAP_FLAGS }}"
@@ -41,7 +41,7 @@ runs:
         
         # Load the package with debug info
         SetInfoLevel( InfoPackageLoading, PACKAGE_DEBUG );
-        SetPackagePath( info.PackageName, "/tmp/gaproot/pkg/$(basename $PWD)" );
+        SetPackagePath( info.PackageName, "$GAP_ROOT/pkg/$(basename $PWD)" );
         if ${{ inputs.ONLY_NEEDED }} then
             LoadPackage( info.PackageName : OnlyNeeded );
         else
