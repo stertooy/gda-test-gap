@@ -1,12 +1,16 @@
 name: "Run GAP test suite"
 description: "Runs the testintall.g or the teststandard.g script to test the GAP installation"
 inputs:
+  COMPLETE:
+    description: "Whether to use testinstall.g or the more complete (but slower) teststandard.g"
+    required: false
+    default: false
   ONLY_NEEDED:
     description: "Only load necessary packages, not suggested ones, prior to testing"
     required: false
     default: false
-  COMPLETE:
-    description: "Whether to use testinstall.g or the more complete (but slower) teststandard.g"
+  ALL_PACKAGES:
+    description: "Load all packages prior to testing"
     required: false
     default: false
 
@@ -42,7 +46,9 @@ runs:
         # Load the package with debug info
         SetInfoLevel( InfoPackageLoading, PACKAGE_DEBUG );
         SetPackagePath( info.PackageName, "$GAP_ROOT/pkg/$(basename $PWD)" );
-        if ${{ inputs.ONLY_NEEDED }} then
+        if ${{ inputs.ALL_PACKAGES }} then
+            LoadAllPackages();
+        elif ${{ inputs.ONLY_NEEDED }} then
             LoadPackage( info.PackageName : OnlyNeeded );
         else
             LoadPackage( info.PackageName );
