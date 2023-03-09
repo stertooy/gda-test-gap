@@ -2,7 +2,7 @@ name: "Run GAP test suite"
 description: "Runs the testintall.g or the teststandard.g script to test the GAP installation"
 inputs:
   COMPLETE:
-    description: "Whether to use testinstall.g or the more complete (but slower) teststandard.g"
+    description: "Use the more complete (but slower) teststandard.g instead of testinstall.g"
     required: false
     default: false
   ONLY_NEEDED:
