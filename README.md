@@ -12,7 +12,7 @@ This action can optionally be called in the workflow of a GAP package to run the
     * Use the more complete (but slower) teststandard.g instead of testinstall.g
     * default: `false`
     * required: `false`
-  - `ONLY_NEEDEDE`:
+  - `ONLY_NEEDED`:
     * Only load necessary packages, not suggested ones, prior to testing
     * default: `false`
     * required: `false`
