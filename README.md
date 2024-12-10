@@ -1,6 +1,6 @@
 # gda-test-gap
 
-This GitHub action tests GAP with the GAP package located in the current directory.
+This GitHub action tests GAP with the GAP package located in the current directory. Based (loosely) on [gap-actions/run-pkg-tests](https://github.com/gap-actions/run-pkg-tests).
 
 
 ## Usage
@@ -40,7 +40,7 @@ jobs:
       image: ghcr.io/stertooy/gda-image:master-slim
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: stertooy/gda-build-pkg@v1
       - uses: stertooy/gda-test-gap@v1
 ```
