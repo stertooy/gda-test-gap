@@ -16,10 +16,10 @@ jobs:
       image: ghcr.io/stertooy/gda-image:master
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           repository: gap-packages/example
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           path: this-action/
       - uses: stertooy/gda-build-pkg@v1
