@@ -7,20 +7,19 @@ on:
 
 jobs:
   test:
-    name: "Test building package"
+    name: "Test package"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
 
     container:
-      image: ghcr.io/stertooy/gda-image:master
+      image: ghcr.io/stertooy/gda-image:master-full
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           repository: gap-packages/example
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           path: this-action/
-      - uses: stertooy/gda-build-pkg@v1
       - uses: ./this-action/
