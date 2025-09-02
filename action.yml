@@ -89,6 +89,12 @@ runs:
         # Load the package with debug info
         SetInfoLevel( InfoPackageLoading, PACKAGE_DEBUG );
         SetPackagePath(info.PackageName, "/tmp/gaproot/pkg/$(basename $PWD)");
+
+        # Capture the output of loading
+        output := "";
+        output_stream := OutputTextString(output, true);
+        SetPrintFormattingStatus(output_stream, false);
+        OutputLogTo(output_stream);
          
         # Load the package with debug info
         if "${{ inputs.mode }}" = "onlyneeded" then
