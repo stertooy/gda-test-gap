@@ -1,10 +1,10 @@
-name: "Run GAP test suite"
-description: "Runs the testintall.g or the teststandard.g script to test the GAP installation"
+name: 'Run GAP test suite'
+description: 'Runs the testintall.g or the teststandard.g script to test the GAP installation'
 inputs:
   complete:
-    description: "Use the more complete (but slower) teststandard.g instead of testinstall.g"
+    description: 'Use the more complete (but slower) teststandard.g instead of testinstall.g'
     required: false
-    default: false
+    default: 'false'
   mode:
     description: 'Value that determines which packages are loaded before the package is tested. The possible values are ''default'', ''onlyneeded'' or ''loadall''. The option ''default'' loads GAP with default set of package; ''onlyneeded'' loads only the needed dependencies of the package being tested; ''loadall'' executes LoadAllPackages() before the package being tested.'
     required: false
