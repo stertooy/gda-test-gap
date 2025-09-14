@@ -97,7 +97,8 @@ runs:
 
         # Treat warnings as errors if specified
         if ${{ inputs.warnings-as-errors }} then
-           if PositionSublist(output, "warning") <> fail then
+           if PositionSublist(output, "warning") <> fail or 
+               PositionSublist(output, "no package with this name is installed") then
                Error("Warnings were found when loading the package");
            fi;
         fi;
